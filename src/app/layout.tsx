@@ -42,7 +42,9 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <ConvexClientProvider>{children}</ConvexClientProvider>
+            <ConvexClientProvider>
+              <div className="grid grid-rows-[auto_1fr] h-svh">{children}</div>
+            </ConvexClientProvider>
             <Toaster position="bottom-right" />
           </ThemeProvider>
         </body>

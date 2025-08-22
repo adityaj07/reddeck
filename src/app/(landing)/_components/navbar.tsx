@@ -12,7 +12,7 @@ const menuItems = [
   { name: "About", href: "#link" },
 ];
 
-export const HeroHeader = ({ className }: { className?: string }) => {
+export const Navbar = ({ className }: { className?: string }) => {
   const [menuState, setMenuState] = React.useState(false);
   const [isScrolled, setIsScrolled] = React.useState(false);
 
@@ -93,18 +93,14 @@ export const HeroHeader = ({ className }: { className?: string }) => {
                   variant="outline"
                   size="sm"
                   className={cn(isScrolled && "lg:hidden")}
-                >
-                  <Link href="#">
-                    <span>Login</span>
-                  </Link>
-                </Button>
+                ></Button>
                 <Button
                   asChild
                   size="sm"
                   className={cn(isScrolled && "lg:hidden")}
                 >
-                  <Link href="#">
-                    <span>Sign Up</span>
+                  <Link href="/auth">
+                    <span>Log in</span>
                   </Link>
                 </Button>
                 <Button

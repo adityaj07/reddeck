@@ -1,5 +1,5 @@
 import AppFooter from "./_components/footer";
-import { HeroHeader } from "./_components/hero-header";
+import { Navbar } from "./_components/navbar";
 
 export default function LandingLayout({
   children,
@@ -8,7 +8,7 @@ export default function LandingLayout({
 }>) {
   return (
     <div>
-      <HeroHeader className="pb-10" />
+      <Navbar className="pb-10" />
       {children}
       <AppFooter />
     </div>

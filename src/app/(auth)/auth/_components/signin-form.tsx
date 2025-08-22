@@ -12,6 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -48,7 +49,7 @@ export function SigninForm() {
           ? "Signed In successfully"
           : "Account created successfully"
       );
-      router.push("/notes");
+      router.push("/app/dashboard");
     } catch (error) {
       console.error(error);
 
@@ -74,27 +75,48 @@ export function SigninForm() {
             });
           }
         } else {
-          toast.error("Something went wrong. Please try again.");
+          toast.error("Something went wrong. Please try again. 123");
         }
       } else {
-        toast.error("Something went wrong. Please try again.");
+        toast.error("Something went wrong. Please try again. 456");
       }
+    } finally {
+      setIsLoading(false);
     }
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-muted/50">
-      <div className="w-full max-w-md p-8 space-y-8 bg-card rounded-lg shadow-lg">
-        <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold text-card-foreground">
-            {step === "signIn" ? "Login" : "Create Account"}
-          </h1>
-          <p className="text-muted-foreground">
-            {step === "signIn"
-              ? "Enter your credentials to access your account."
-              : "Enter your details to create a new account."}
-          </p>
-        </div>
+    <motion.div
+      className="flex flex-col items-center justify-center min-h-screen bg-muted/50"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+    >
+      <motion.div
+        className="w-full max-w-md p-8 space-y-8 bg-card rounded-lg shadow-lg"
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
+      >
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={step}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3 }}
+            className="text-center space-y-2"
+          >
+            <h1 className="text-3xl font-bold text-card-foreground">
+              {step === "signIn" ? "Login" : "Create Account"}
+            </h1>
+            <p className="text-muted-foreground">
+              {step === "signIn"
+                ? "Enter your credentials to access your account."
+                : "Enter your details to create a new account."}
+            </p>
+          </motion.div>
+        </AnimatePresence>
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <FormField
@@ -132,25 +154,30 @@ export function SigninForm() {
                 {form.formState.errors.root.message}
               </div>
             )}
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {step === "signIn" ? "Sign In" : "Sign Up"}
-            </Button>
+            <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}>
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {step === "signIn" ? "Sign In" : "Sign Up"}
+              </Button>
+            </motion.div>
           </form>
         </Form>
-        <Button
-          variant="link"
-          type="button"
-          className="w-full text-sm text-muted-foreground cursor-pointer"
-          onClick={() => {
-            setStep(step === "signIn" ? "signUp" : "signIn");
-            form.reset(); // Reset form errors and values when switching modes
-          }}
-        >
-          {step === "signIn"
-            ? "Don't have an account? Sign Up"
-            : "Already have an account? Sign In"}
-        </Button>
-      </div>
-    </div>
+
+        <motion.div whileHover={{ scale: 1.02 }}>
+          <Button
+            variant="link"
+            type="button"
+            className="w-full text-sm text-muted-foreground cursor-pointer"
+            onClick={() => {
+              setStep(step === "signIn" ? "signUp" : "signIn");
+              form.reset();
+            }}
+          >
+            {step === "signIn"
+              ? "Don't have an account? Sign Up"
+              : "Already have an account? Sign In"}
+          </Button>
+        </motion.div>
+      </motion.div>
+    </motion.div>
   );
 }

@@ -21,7 +21,7 @@ export default function DashboardLayout({
 
           {/* <Separator /> */}
 
-          <main className="flex flex-1 overflow-y-auto px-4 md:px-8 max-w-6xl w-full mx-auto py-3 md:py-6">
+          <main className=" flex flex-1 overflow-y-auto px-4 md:px-8 max-w-6xl w-full mx-auto py-3 md:py-6">
             {children}
           </main>
         </div>

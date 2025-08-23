@@ -7,7 +7,7 @@ const schema = defineSchema({
 
   users: defineTable({
     email: v.string(),
-    credits: v.number(),
+    credits: v.optional(v.number()),
   }).index("by_email", ["email"]),
 
   user_subreddits: defineTable({
@@ -22,6 +22,7 @@ const schema = defineSchema({
     title: v.optional(v.string()),
     description: v.optional(v.string()),
     subscribers: v.optional(v.number()),
+    createdAt: v.number(),
     updatedAt: v.number(),
     lastFetchedAt: v.optional(v.number()),
   }).index("by_name", ["name"]),
@@ -63,7 +64,8 @@ const schema = defineSchema({
     role: v.string(), // "user" | "assistant"
     content: v.string(),
     relatedPostIds: v.optional(v.array(v.id("posts"))),
-  }).index("by_user_time", ["userId", "_creationTime"]),
+    createdAt: v.number(),
+  }).index("by_user_time", ["userId", "createdAt"]),
 
   embeddings: defineTable({
     parentType: v.string(), // "post" | "comment"
@@ -72,9 +74,10 @@ const schema = defineSchema({
     embedding: v.array(v.number()),
     content: v.string(), // raw text used for embedding
     metadata: v.optional(v.string()),
+    createdAt: v.number(),
   })
     .index("by_parent", ["parentType", "parentId"])
-    .index("by_subreddit", ["subredditId", "_creationTime"]),
+    .index("by_subreddit", ["subredditId", "createdAt"]),
 
   listing_meta: defineTable({
     subredditId: v.id("subreddits"),

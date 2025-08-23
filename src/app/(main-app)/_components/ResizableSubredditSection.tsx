@@ -36,8 +36,17 @@ interface Subreddit {
   posts: RedditPost[];
 }
 
-const ResizableSubredditSection: FC = () => {
-  const [subreddits, setSubreddits] = useState<Subreddit[]>([]);
+interface ResizableSubredditSectionProps {
+  subreddits: Subreddit[];
+  setSubreddits: React.Dispatch<React.SetStateAction<Subreddit[]>>;
+  onClose: () => void;
+}
+
+const ResizableSubredditSection: FC<ResizableSubredditSectionProps> = ({
+  subreddits,
+  setSubreddits,
+  onClose,
+}) => {
   const [inputValue, setInputValue] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [activeColumn, setActiveColumn] = useState<number>(0);
@@ -133,9 +142,9 @@ const ResizableSubredditSection: FC = () => {
     }
 
     return (
-      <div className="flex flex-col h-full w-full bg-background">
+      <div className="flex flex-col h-full w-full bg-background overflow-hidden min-w-[320px]">
         {/* Header */}
-        <div className="flex justify-between items-center px-4 py-3 border-b border-border flex-shrink-0">
+        <div className="flex justify-between items-center px-4 py-3 border-b border-border flex-none">
           <h2 className="font-semibold text-lg text-foreground">
             r/{subreddit.name}
           </h2>
@@ -165,7 +174,7 @@ const ResizableSubredditSection: FC = () => {
         </div>
 
         {/* Scrollable posts - takes remaining space */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0">
+        <div className="flex-1 min-h-0 overflow-y-auto p-4 space-y-4">
           {loadingIndexes[index] ? (
             <div className="space-y-3">
               {[...Array(5)].map((_, i) => (
@@ -179,7 +188,7 @@ const ResizableSubredditSection: FC = () => {
             subreddit.posts.map((post) => (
               <div
                 key={post.id}
-                className="rounded-2xl border border-border bg-card shadow-sm p-4 hover:shadow-md transition flex-shrink-0"
+                className="rounded-2xl border border-border bg-card shadow-sm p-4 hover:shadow-md transition"
               >
                 <a
                   href={`https://reddit.com${post.permalink}`}
@@ -202,7 +211,7 @@ const ResizableSubredditSection: FC = () => {
   };
 
   return (
-    <div className="w-full h-full flex flex-col">
+    <div className="h-full w-full flex flex-col min-h-0">
       {subreddits?.length === 0 ? (
         <div className="flex items-center justify-center h-full">
           <AddSubredditEmptyState
@@ -213,18 +222,24 @@ const ResizableSubredditSection: FC = () => {
       ) : (
         <ResizablePanelGroup
           direction="horizontal"
-          className="h-full w-full rounded-lg border overflow-hidden"
+          className="flex-1 min-h-0 rounded-lg border overflow-hidden"
         >
           {subreddits.map((sub, idx) => (
             <Fragment key={sub.name || idx}>
-              <ResizablePanel defaultSize={100 / (subreddits.length + 1)}>
+              <ResizablePanel
+                defaultSize={100 / (subreddits.length + 1)}
+                className="overflow-hidden"
+              >
                 {renderColumn(sub, idx)}
               </ResizablePanel>
               <ResizableHandle withHandle />
             </Fragment>
           ))}
 
-          <ResizablePanel defaultSize={100 / (subreddits.length + 1)}>
+          <ResizablePanel
+            defaultSize={100 / (subreddits.length + 1)}
+            className="overflow-hidden"
+          >
             {renderColumn(null, subreddits.length)}
           </ResizablePanel>
         </ResizablePanelGroup>

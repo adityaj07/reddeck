@@ -26,6 +26,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { useAuthActions } from "@convex-dev/auth/react";
+import { useRouter } from "next/navigation";
 
 export function NavUser({
   user,
@@ -38,8 +39,16 @@ export function NavUser({
 }) {
   const { isMobile } = useSidebar();
   const { signOut } = useAuthActions();
+  const router = useRouter();
 
-  const handleSignout = () => {};
+  const handleSignout = async () => {
+    try {
+      await signOut();
+      router.push("/auth");
+    } catch (err) {
+      console.error("Failed to sign out:", err);
+    }
+  };
 
   return (
     <SidebarMenu>
@@ -102,7 +111,7 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => signOut()}>
+            <DropdownMenuItem onClick={handleSignout}>
               <LogOut />
               Log out
             </DropdownMenuItem>

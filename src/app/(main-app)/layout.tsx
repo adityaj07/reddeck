@@ -38,7 +38,7 @@ export default function DashboardLayout({
       <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
         <SheetContent
           side="right"
-          className="!max-w-none w-[600px] sm:w-[800px] md:w-[1000px] p-6 overflow-hidden"
+          className="!max-w-none sm:w-[300px] md:w-[1000px] p-6 overflow-hidden"
         >
           <div className="h-full flex flex-col space-y-4">
             <h2 className="text-xl font-semibold">Your Subreddits</h2>

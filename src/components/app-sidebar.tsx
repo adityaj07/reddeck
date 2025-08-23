@@ -1,14 +1,6 @@
 "use client";
 
-import {
-  AudioWaveform,
-  Command,
-  GalleryVerticalEnd,
-  LayoutDashboard,
-  LogsIcon,
-  Settings2,
-  User2,
-} from "lucide-react";
+import { LayoutDashboard, LogsIcon, Settings2, User2 } from "lucide-react";
 import * as React from "react";
 
 import { NavMain } from "@/components/nav-main";
@@ -81,7 +73,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
 
       <SidebarContent className="bg-accent">
-        <NavMain items={data.navMain} />
+        <NavMain
+          chats={[
+            { id: "1", title: "My first chat" },
+            { id: "2", title: "Another chat" },
+          ]}
+          onNewChat={() => console.log("new chat")}
+          platform={data.navMain}
+        />
       </SidebarContent>
 
       <SidebarFooter className="bg-accent">

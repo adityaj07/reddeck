@@ -13,7 +13,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
-  const [subreddits, setSubreddits] = useState<any[]>([]); // lift state up
+  const [subreddits, setSubreddits] = useState<any[]>([]);
 
   return (
     <SidebarProvider>
@@ -28,7 +28,7 @@ export default function DashboardLayout({
             <Separator />
           </div>
 
-          <main className="flex flex-1 overflow-y-auto px-4 md:px-8 max-w-6xl w-full mx-auto py-3 md:py-6">
+          <main className="flex flex-1 overflow-y-auto px-4 md:px-8 max-w-6xl w-full mx-auto">
             {children}
           </main>
         </div>

@@ -49,7 +49,7 @@ export function SigninForm() {
           ? "Signed In successfully"
           : "Account created successfully"
       );
-      router.push("/app/dashboard");
+      router.push("/");
     } catch (error) {
       console.error(error);
 

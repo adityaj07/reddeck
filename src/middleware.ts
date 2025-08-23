@@ -4,30 +4,30 @@ import {
   nextjsMiddlewareRedirect,
 } from "@convex-dev/auth/nextjs/server";
 
-const isSignInPage = createRouteMatcher(["/auth"]);
-const isProtectedRoute = createRouteMatcher([
-  "/app(.*)", // all dashboard features
-  "/settings(.*)",
-  "/billing(.*)",
-  "/profile(.*)",
-]);
+// Public routes
+const isAuthPage = createRouteMatcher(["/auth"]);
+const isLandingPage = createRouteMatcher(["/landing"]);
 
+// All others should be protected
 export default convexAuthNextjsMiddleware(
   async (request, { convexAuth }) => {
-    if (isSignInPage(request) && (await convexAuth.isAuthenticated())) {
-      return nextjsMiddlewareRedirect(request, "/app/dashboard");
+    const isAuthenticated = await convexAuth.isAuthenticated();
+
+    // If user visits /auth or /landing but is already signed in → go to /
+    if ((isAuthPage(request) || isLandingPage(request)) && isAuthenticated) {
+      return nextjsMiddlewareRedirect(request, "/");
     }
-    if (isProtectedRoute(request) && !(await convexAuth.isAuthenticated())) {
+
+    // If user is not signed in and tries to visit anything except /auth or /landing → redirect to /auth
+    if (!isAuthenticated && !isAuthPage(request) && !isLandingPage(request)) {
       return nextjsMiddlewareRedirect(request, "/auth");
     }
   },
   {
-    cookieConfig: { maxAge: 60 * 60 * 24 * 30 },
+    cookieConfig: { maxAge: 60 * 60 * 24 * 30 }, // 30 days
   }
 );
 
 export const config = {
-  // The following matcher runs middleware on all routes
-  // except static assets.
   matcher: ["/((?!.*\\..*|_next).*)", "/", "/(api|trpc)(.*)"],
 };

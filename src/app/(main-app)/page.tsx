@@ -1,52 +1,61 @@
 "use client";
 
-import { MessageSquarePlus, PlusCircle, Search } from "lucide-react";
-import { type FC } from "react";
-import { AI_Prompt } from "./_components/animated-ai-input";
+import { useChat } from "@ai-sdk/react";
+import { useAuthToken } from "@convex-dev/auth/react";
+import { DefaultChatTransport } from "ai";
+import { useEffect, useRef } from "react";
+import { ChatInputBox } from "./_components/animated-ai-input";
+import ChatMessage from "./_components/chat/ChatMessage";
+import EmptyState from "./_components/chat/EmptyState";
+import Loader from "./_components/chat/Loader";
 
-interface PageProps {}
+const convexSiteUrl = process.env.NEXT_PUBLIC_CONVEX_URL?.replace(
+  /.cloud$/,
+  ".site"
+);
 
-const EmptyState: FC = () => {
-  return (
-    <div className="flex flex-col items-center justify-center text-center space-y-6 px-6 py-10 text-muted-foreground">
-      <div className="flex h-20 w-20 items-center justify-center rounded-full bg-muted">
-        <MessageSquarePlus className="h-10 w-10 text-primary" />
-      </div>
+const Page = () => {
+  const token = useAuthToken();
 
-      <div className="space-y-2">
-        <h2 className="text-xl font-semibold text-foreground">
-          No conversations yet
-        </h2>
-        <p className="text-sm">
-          Start by chatting with AI or adding a subreddit to get context.
-        </p>
-      </div>
+  const { messages, sendMessage, status } = useChat({
+    transport: new DefaultChatTransport({
+      api: `${convexSiteUrl}/api/chat`,
+      headers: { Authorization: `Bearer ${token}` },
+    }),
+    messages: [],
+  });
 
-      <div className="flex flex-col gap-3 text-sm w-full max-w-xs">
-        <button className="flex items-center gap-2 rounded-xl border px-4 py-2 hover:bg-accent hover:text-accent-foreground transition">
-          <PlusCircle className="h-4 w-4" />
-          Add a subreddit
-        </button>
-        <button className="flex items-center gap-2 rounded-xl border px-4 py-2 hover:bg-accent hover:text-accent-foreground transition">
-          <Search className="h-4 w-4" />
-          Explore trending topics
-        </button>
-      </div>
-    </div>
-  );
-};
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const isProcessing = status === "submitted" || status === "streaming";
 
-const Page: FC<PageProps> = ({}) => {
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
   return (
     <div className="relative flex h-full w-full flex-col">
       {/* Main chat area */}
-      <div className="flex-1 overflow-y-auto flex items-center justify-center px-6">
-        <EmptyState />
+      <div className="flex-1 overflow-y-auto flex flex-col">
+        {messages.length === 0 ? (
+          <EmptyState />
+        ) : (
+          <div className="flex-1 space-y-4 overflow-y-auto px-6 py-4">
+            {messages.map((msg) => (
+              <ChatMessage key={msg.id} message={msg} />
+            ))}
+            {isProcessing && <Loader />}
+            <div ref={messagesEndRef} />
+          </div>
+        )}
       </div>
 
       {/* Chat input docked at bottom */}
       <div className="sticky bottom-0 flex justify-center bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <AI_Prompt className="w-[90%] md:w-4/6" />
+        <ChatInputBox
+          className=" md:w-full"
+          onSendMessage={(text) => sendMessage({ text })}
+          disabled={isProcessing}
+        />
       </div>
     </div>
   );

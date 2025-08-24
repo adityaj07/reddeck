@@ -92,7 +92,17 @@ const OPENAI_ICON = (
   </>
 );
 
-export function AI_Prompt({ className }: { className?: string }) {
+interface ChatInputBoxProps {
+  className?: string;
+  onSendMessage?: (text: string) => Promise<void> | void;
+  disabled?: boolean;
+}
+
+export function ChatInputBox({
+  className,
+  onSendMessage,
+  disabled,
+}: ChatInputBoxProps) {
   const [value, setValue] = useState("");
   const { textareaRef, adjustHeight } = useAutoResizeTextarea({
     minHeight: 72,
@@ -168,17 +178,22 @@ export function AI_Prompt({ className }: { className?: string }) {
     "GPT-4-1": OPENAI_ICON,
   };
 
+  const handleSend = () => {
+    if (!value.trim()) return;
+    onSendMessage?.(value);
+    setValue("");
+    adjustHeight(true);
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey && value.trim()) {
       e.preventDefault();
-      setValue("");
-      adjustHeight(true);
-      // Here you can add message sending
+      handleSend();
     }
   };
 
   return (
-    <div className={cn("w-[90%] md:w-4/6 py-4", className)}>
+    <div className={cn("w-[90%] md:full py-4", className)}>
       <div className="bg-black/5 dark:bg-white/5 rounded-2xl p-1.5">
         <div className="relative">
           <div className="relative flex flex-col">
@@ -197,6 +212,7 @@ export function AI_Prompt({ className }: { className?: string }) {
                   setValue(e.target.value);
                   adjustHeight();
                 }}
+                disabled={disabled}
               />
             </div>
 
@@ -282,13 +298,8 @@ export function AI_Prompt({ className }: { className?: string }) {
                     "hover:bg-black/10 dark:hover:bg-white/10 focus-visible:ring-1 focus-visible:ring-offset-0 focus-visible:ring-blue-500"
                   )}
                   aria-label="Send message"
-                  disabled={!value.trim()}
-                  onClick={() => {
-                    if (!value.trim()) return;
-                    setValue("");
-                    adjustHeight(true);
-                    // Здесь можно добавить отправку сообщения
-                  }}
+                  onClick={handleSend}
+                  disabled={!value.trim() || disabled}
                 >
                   <ArrowRight
                     className={cn(

@@ -23,6 +23,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useRouter } from "next/navigation";
 import { api } from "../../convex/_generated/api";
 import { Separator } from "./ui/separator";
 
@@ -55,6 +56,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     api.users.queries.getCurrentUser,
     isAuthenticated ? {} : "skip"
   );
+  const router = useRouter();
 
   return (
     <Sidebar variant="inset" {...props} className="bg-accent">
@@ -130,7 +132,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               variant="default"
               size="sm"
               className="w-full flex items-center gap-2"
-              onClick={() => (window.location.href = "/auth")}
+              onClick={() => router.push("/auth")}
             >
               <LogIn className="h-4 w-4" />
               Login

@@ -14,7 +14,10 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as auth from "../auth.js";
+import type * as conversations_mutations from "../conversations/mutations.js";
+import type * as conversations_queries from "../conversations/queries.js";
 import type * as http from "../http.js";
+import type * as messages_mutations from "../messages/mutations.js";
 import type * as subreddits_actions from "../subreddits/actions.js";
 import type * as subreddits_mutations from "../subreddits/mutations.js";
 import type * as subreddits_queries from "../subreddits/queries.js";
@@ -30,7 +33,10 @@ import type * as users_queries from "../users/queries.js";
  */
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
+  "conversations/mutations": typeof conversations_mutations;
+  "conversations/queries": typeof conversations_queries;
   http: typeof http;
+  "messages/mutations": typeof messages_mutations;
   "subreddits/actions": typeof subreddits_actions;
   "subreddits/mutations": typeof subreddits_mutations;
   "subreddits/queries": typeof subreddits_queries;

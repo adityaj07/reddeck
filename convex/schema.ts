@@ -58,14 +58,24 @@ const schema = defineSchema({
     .index("by_post", ["postId"])
     .index("by_sub_created", ["subredditId", "createdUtc"]),
 
-  chats: defineTable({
+  conversations: defineTable({
     userId: v.id("users"),
-    subredditIds: v.optional(v.array(v.id("subreddits"))), // multi-tag support
-    role: v.string(), // "user" | "assistant"
-    content: v.string(),
-    relatedPostIds: v.optional(v.array(v.id("posts"))),
+    title: v.optional(v.string()), // auto-generate from first message
+    subredditIds: v.optional(v.array(v.id("subreddits"))),
     createdAt: v.number(),
-  }).index("by_user_time", ["userId", "createdAt"]),
+    updatedAt: v.number(),
+    creditsUsed: v.optional(v.number()),
+  }).index("by_user", ["userId"]),
+
+  messages: defineTable({
+    conversationId: v.id("conversations"), // link to its chat session
+    userId: v.id("users"),
+    role: v.string(), // "user" | "assistant"
+    content: v.string(), // the message text
+    relatedPostIds: v.optional(v.array(v.id("posts"))),
+    metadata: v.optional(v.string()), // JSON string (token usage, cached flag, etc.)
+    createdAt: v.number(),
+  }).index("by_conversation_time", ["conversationId", "createdAt"]),
 
   embeddings: defineTable({
     parentType: v.string(), // "post" | "comment"
